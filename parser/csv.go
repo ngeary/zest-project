@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encoding/csv"
 	"fmt"
 	"os"
+
+	"github.com/gocarina/gocsv"
 )
 
 func parseCSV(i interface{}) {
@@ -11,30 +12,23 @@ func parseCSV(i interface{}) {
 }
 
 func parseSampleCSV() {
-	// Open the file
-	recordFile, err := os.Open("../data/values-2.csv")
+	file, err := os.Open("../data/values-2.csv")
 	if err != nil {
-		fmt.Println("open error encountered ::", err)
+		fmt.Println("error opening file:", err)
 		return
 	}
 
-	// Setup the reader
-	reader := csv.NewReader(recordFile)
+	defer file.Close()
 
-	// Read the records
-	allRecords, err := reader.ReadAll()
+	values := []Values{}
+
+	err = gocsv.UnmarshalFile(file, &values)
 	if err != nil {
-		fmt.Println("read error encountered ::", err)
+		fmt.Println("error unmarshaling file:", err)
 		return
 	}
 
-	for _, r := range allRecords {
-		fmt.Println(r)
-	}
-
-	err = recordFile.Close()
-	if err != nil {
-		fmt.Println("close error encountered ::", err)
-		return
+	for _, v := range values {
+		fmt.Println(v)
 	}
 }
