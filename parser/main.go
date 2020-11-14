@@ -39,7 +39,7 @@ type Values struct {
 func main() {
 	data := Request{}
 
-	file, err := ioutil.ReadFile("/Users/nick/github-repos/zest-project/data/dataset1.json")
+	file, err := ioutil.ReadFile("../data/dataset1.json")
 	if err != nil {
 		log.Fatalf("error reading file: %v\n", err)
 	}
