@@ -22,10 +22,10 @@ type Row struct {
 
 // Source struct
 type Source struct {
-	Name    string `json:"name"`
-	Version int    `json:"version"`
-	Format  string `json:"format"`
-	// Values  Values `json:"values"`
+	Name    string      `json:"name"`
+	Version int         `json:"version"`
+	Format  string      `json:"format"`
+	Values  interface{} `json:"values"`
 }
 
 // Values struct
@@ -39,31 +39,29 @@ type Values struct {
 }
 
 func main() {
-	data := Request{}
+	req := Request{}
 
-	file, err := ioutil.ReadFile("../data/dataset1.json")
+	file, err := ioutil.ReadFile("../data/dataset3.json")
 	if err != nil {
 		log.Fatalf("error reading file: %v\n", err)
 	}
 
-	err = json.Unmarshal(file, &data)
+	err = json.Unmarshal(file, &req)
 	if err != nil {
 		log.Fatalf("error unmarshaling data: %v\n", err)
 	}
 
-	log.Println(data)
-
-	for _, r := range data.Rows {
+	for _, r := range req.Rows {
 		for _, s := range r.Sources {
-			fmt.Printf("Request ID: %s\tRow ID: %s\tSource Name: %s\t", data.RequestID, r.RowID, s.Name)
+			fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
 
 			switch strings.ToLower(s.Format) {
 			case "json":
-				parseJSON()
+				parseJSON(s.Values)
 			case "csv":
-				parseCSV()
+				parseCSV(s.Values)
 			case "xml":
-				parseXML()
+				parseXML(s.Values)
 			default:
 				log.Printf("unrecognized data format: %s\n", s.Format)
 			}
@@ -71,14 +69,14 @@ func main() {
 	}
 }
 
-func parseJSON() {
-	fmt.Println("parsing json...")
+func parseJSON(i interface{}) {
+	fmt.Printf("parsing json...\n%s\n", i)
 }
 
-func parseCSV() {
-	fmt.Println("parsing csv...")
+func parseCSV(i interface{}) {
+	fmt.Printf("parsing csv...\n%s\n", i)
 }
 
-func parseXML() {
-	fmt.Println("parsing xml...")
+func parseXML(i interface{}) {
+	fmt.Printf("parsing xml...\n%s\n", i)
 }
