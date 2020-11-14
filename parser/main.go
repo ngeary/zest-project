@@ -41,7 +41,7 @@ type Values struct {
 func main() {
 	req := Request{}
 
-	file, err := ioutil.ReadFile("../data/dataset1.json")
+	file, err := ioutil.ReadFile("../data/dataset2.json")
 	if err != nil {
 		log.Fatalf("error reading file: %v\n", err)
 	}
@@ -67,31 +67,4 @@ func main() {
 			}
 		}
 	}
-}
-
-func parseJSON(rawValues interface{}) {
-	fmt.Printf("parsing json...\n%s\n", rawValues)
-
-	bytes, err := json.Marshal(rawValues)
-	if err != nil {
-		log.Println("error converting raw data to byte slice")
-		return
-	}
-
-	vals := Values{}
-	err = json.Unmarshal(bytes, &vals)
-	if err != nil {
-		log.Println("error unmarshaling json values:", err)
-		return
-	}
-
-	fmt.Println("Values:", vals)
-}
-
-func parseCSV(i interface{}) {
-	fmt.Printf("parsing csv...\n%s\n", i)
-}
-
-func parseXML(i interface{}) {
-	fmt.Printf("parsing xml...\n%s\n", i)
 }
