@@ -1,13 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"strings"
-)
-
 // Request represents a json request to insert data
 type Request struct {
 	RequestID string `json:"request_id"`
@@ -30,41 +22,43 @@ type Source struct {
 
 // Values struct
 type Values struct {
-	ID        int    `json:"id"`
-	MemberID  string `json:"member_id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Address   string `json:"address"`
-	DOB       string `json:"dob"`
+	ID        int    `json:"id" csv:"id"`
+	MemberID  string `json:"member_id" csv:"member_id"`
+	FirstName string `json:"first_name" csv:"first_name"`
+	LastName  string `json:"last_name" csv:"last_name"`
+	Address   string `json:"address" csv:"address"`
+	DOB       string `json:"dob" csv:"dob"`
 }
 
 func main() {
-	req := Request{}
+	parseSampleCSV()
 
-	file, err := ioutil.ReadFile("../data/dataset2.json")
-	if err != nil {
-		log.Fatalf("error reading file: %v\n", err)
-	}
+	// req := Request{}
 
-	err = json.Unmarshal(file, &req)
-	if err != nil {
-		log.Fatalf("error unmarshaling data: %v\n", err)
-	}
+	// file, err := ioutil.ReadFile("../data/dataset2.json")
+	// if err != nil {
+	// 	log.Fatalf("error reading file: %v\n", err)
+	// }
 
-	for _, r := range req.Rows {
-		for _, s := range r.Sources {
-			fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
+	// err = json.Unmarshal(file, &req)
+	// if err != nil {
+	// 	log.Fatalf("error unmarshaling data: %v\n", err)
+	// }
 
-			switch strings.ToLower(s.Format) {
-			case "json":
-				parseJSON(s.Values)
-			case "csv":
-				parseCSV(s.Values)
-			case "xml":
-				parseXML(s.Values)
-			default:
-				log.Printf("unrecognized data format: %s\n", s.Format)
-			}
-		}
-	}
+	// for _, r := range req.Rows {
+	// 	for _, s := range r.Sources {
+	// 		fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
+
+	// 		switch strings.ToLower(s.Format) {
+	// 		case "json":
+	// 			parseJSON(s.Values)
+	// 		case "csv":
+	// 			parseCSV(s.Values)
+	// 		case "xml":
+	// 			parseXML(s.Values)
+	// 		default:
+	// 			log.Printf("unrecognized data format: %s\n", s.Format)
+	// 		}
+	// 	}
+	// }
 }
