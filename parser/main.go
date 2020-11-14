@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 // Request represents a json request to insert data
@@ -23,7 +25,7 @@ type Source struct {
 	Name    string `json:"name"`
 	Version int    `json:"version"`
 	Format  string `json:"format"`
-	Values  Values `json:"values"`
+	// Values  Values `json:"values"`
 }
 
 // Values struct
@@ -50,4 +52,33 @@ func main() {
 	}
 
 	log.Println(data)
+
+	for _, r := range data.Rows {
+		for _, s := range r.Sources {
+			fmt.Printf("Request ID: %s\tRow ID: %s\tSource Name: %s\t", data.RequestID, r.RowID, s.Name)
+
+			switch strings.ToLower(s.Format) {
+			case "json":
+				parseJSON()
+			case "csv":
+				parseCSV()
+			case "xml":
+				parseXML()
+			default:
+				log.Printf("unrecognized data format: %s\n", s.Format)
+			}
+		}
+	}
+}
+
+func parseJSON() {
+	fmt.Println("parsing json...")
+}
+
+func parseCSV() {
+	fmt.Println("parsing csv...")
+}
+
+func parseXML() {
+	fmt.Println("parsing xml...")
 }
