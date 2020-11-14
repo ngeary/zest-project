@@ -1,4 +1,11 @@
 {
-    "num_field": 123,
-    "string_fields": "hello, world"
+    "num_fields": {
+        "n1": 123,
+        "n2": 234,
+        "n3": -8
+    },
+    "string_fields": {
+        "s1": "hello",
+        "s2": "world"
+    }
 }
