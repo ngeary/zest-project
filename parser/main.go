@@ -30,12 +30,21 @@ type Source struct {
 
 // Values struct
 type Values struct {
-	ID        int    `json:"id" csv:"id"`
-	MemberID  string `json:"member_id" csv:"member_id"`
-	FirstName string `json:"first_name" csv:"first_name"`
-	LastName  string `json:"last_name" csv:"last_name"`
-	Address   string `json:"address" csv:"address"`
-	DOB       string `json:"dob" csv:"dob"`
+	ID                 int    `json:"id" csv:"id"`
+	MemberID           string `json:"member_id" csv:"member_id"`
+	FirstName          string `json:"first_name" csv:"first_name"`
+	LastName           string `json:"last_name" csv:"last_name"`
+	Address            string `json:"address" csv:"address"`
+	DOB                string `json:"dob" csv:"dob"`
+	CountryID          int    `json:"CountryID"`
+	Employer           string `json:"Employer"`
+	EmploymentType     int    `json:"EmploymentType"`
+	EmpOrderNum        int    `json:"EmpOrderNum"`
+	GrossMonthlyIncome int    `json:"GrossMonthlyIncome"`
+	Position           string `json:"Position"`
+	RetiredFlag        string `json:"RetiredFlag"`
+	SelfEmpFlag        string `json:"SelfEmpFlag"`
+	State              string `json:"State"`
 }
 
 func main() {
