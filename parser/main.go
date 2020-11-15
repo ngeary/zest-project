@@ -36,21 +36,21 @@ type Values struct {
 	LastName           string `json:"last_name" csv:"last_name"`
 	Address            string `json:"address" csv:"address"`
 	DOB                string `json:"dob" csv:"dob"`
-	CountryID          int    `json:"CountryID"`
-	Employer           string `json:"Employer"`
-	EmploymentType     int    `json:"EmploymentType"`
-	EmpOrderNum        int    `json:"EmpOrderNum"`
-	GrossMonthlyIncome int    `json:"GrossMonthlyIncome"`
-	Position           string `json:"Position"`
-	RetiredFlag        string `json:"RetiredFlag"`
-	SelfEmpFlag        string `json:"SelfEmpFlag"`
-	State              string `json:"State"`
+	CountryID          int    `json:"CountryID" xml:"CountryID"`
+	Employer           string `json:"Employer" xml:"Employer"`
+	EmploymentType     int    `json:"EmploymentType" xml:"EmploymentType"`
+	EmpOrderNum        int    `json:"EmpOrderNum" xml:"EmpOrderNum"`
+	GrossMonthlyIncome int    `json:"GrossMonthlyIncome" xml:"GrossMonthlyIncome"`
+	Position           string `json:"Position" xml:"Position"`
+	RetiredFlag        string `json:"RetiredFlag" xml:"RetiredFlag"`
+	SelfEmpFlag        string `json:"SelfEmpFlag" xml:"SelfEmpFlag"`
+	State              string `json:"State" xml:"State"`
 }
 
 func main() {
 	req := Request{}
 
-	file, err := ioutil.ReadFile("../data/dataset2.json")
+	file, err := ioutil.ReadFile("../data/dataset3.json")
 	if err != nil {
 		log.Fatalf("error reading file: %v\n", err)
 	}

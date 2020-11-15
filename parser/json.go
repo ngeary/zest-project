@@ -7,7 +7,7 @@ import (
 )
 
 func parseJSON(rawValues interface{}) {
-	fmt.Printf("parsing json...\n")
+	fmt.Println("parsing json...")
 
 	bytes, err := json.Marshal(rawValues)
 	if err != nil {

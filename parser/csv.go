@@ -8,7 +8,7 @@ import (
 )
 
 func parseCSV(rawValues interface{}) {
-	fmt.Printf("parsing csv...\n")
+	fmt.Println("parsing csv...")
 
 	s, ok := rawValues.(string)
 	if !ok {
