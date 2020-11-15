@@ -31,21 +31,21 @@ type Source struct {
 
 // Values struct
 type Values struct {
-	ID                 int    `json:"id" csv:"id"`
-	MemberID           string `json:"member_id" csv:"member_id"`
-	FirstName          string `json:"first_name" csv:"first_name"`
-	LastName           string `json:"last_name" csv:"last_name"`
-	Address            string `json:"address" csv:"address"`
-	DOB                string `json:"dob" csv:"dob"`
-	CountryID          int    `json:"CountryID" xml:"CountryID"`
-	Employer           string `json:"Employer" xml:"Employer"`
-	EmploymentType     int    `json:"EmploymentType" xml:"EmploymentType"`
-	EmpOrderNum        int    `json:"EmpOrderNum" xml:"EmpOrderNum"`
-	GrossMonthlyIncome int    `json:"GrossMonthlyIncome" xml:"GrossMonthlyIncome"`
-	Position           string `json:"Position" xml:"Position"`
-	RetiredFlag        string `json:"RetiredFlag" xml:"RetiredFlag"`
-	SelfEmpFlag        string `json:"SelfEmpFlag" xml:"SelfEmpFlag"`
-	State              string `json:"State" xml:"State"`
+	ID                 interface{} `json:"id" csv:"id"`
+	MemberID           interface{} `json:"member_id" csv:"member_id"`
+	FirstName          interface{} `json:"first_name" csv:"first_name"`
+	LastName           interface{} `json:"last_name" csv:"last_name"`
+	Address            interface{} `json:"address" csv:"address"`
+	DOB                interface{} `json:"dob" csv:"dob"`
+	CountryID          interface{} `json:"CountryID" xml:"CountryID"`
+	Employer           interface{} `json:"Employer" xml:"Employer"`
+	EmploymentType     interface{} `json:"EmploymentType" xml:"EmploymentType"`
+	EmpOrderNum        interface{} `json:"EmpOrderNum" xml:"EmpOrderNum"`
+	GrossMonthlyIncome interface{} `json:"GrossMonthlyIncome" xml:"GrossMonthlyIncome"`
+	Position           interface{} `json:"Position" xml:"Position"`
+	RetiredFlag        interface{} `json:"RetiredFlag" xml:"RetiredFlag"`
+	SelfEmpFlag        interface{} `json:"SelfEmpFlag" xml:"SelfEmpFlag"`
+	State              interface{} `json:"State" xml:"State"`
 }
 
 func main() {
