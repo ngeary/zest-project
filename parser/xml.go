@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"strings"
+	"regexp"
 )
 
 func parseXML(rawValues interface{}) (*Values, error) {
@@ -15,8 +15,6 @@ func parseXML(rawValues interface{}) (*Values, error) {
 		return nil, errors.New("could not convert input to string")
 	}
 
-	s = strings.TrimPrefix(s, "<?xmlversion=\"1.0\"encoding=\"UTF-8\"?>")
-
 	vals := &Values{}
 	err := xml.Unmarshal([]byte(s), vals)
 	if err != nil {
@@ -24,4 +22,12 @@ func parseXML(rawValues interface{}) (*Values, error) {
 	}
 
 	return vals, nil
+}
+
+func removeXMLDeclarations(bytes []byte) []byte {
+	// regex matches the following pattern: <?xml + (any number of any character) + version + (any number of any character) + ?>
+	re := regexp.MustCompile(`<\?xml.*version.*\?>`)
+
+	// replace each occurrence of XML declaration with empty byte slice
+	return re.ReplaceAll(bytes, []byte{})
 }

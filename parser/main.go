@@ -50,9 +50,11 @@ type Values struct {
 
 func main() {
 	files := []string{
+		// "../data/ng-dataset1.json",
 		"../data/dataset1.json",
 		"../data/dataset2.json",
 		"../data/dataset3.json",
+		"../data/dataset4.json",
 	}
 
 	var err error
@@ -70,6 +72,8 @@ func parse(filename string) error {
 	if err != nil {
 		return err
 	}
+
+	file = removeXMLDeclarations(file)
 
 	req := Request{}
 
