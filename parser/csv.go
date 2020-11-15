@@ -15,7 +15,7 @@ func parseCSV(rawValues interface{}) (*Values, error) {
 		return nil, errors.New("could not convert input to string")
 	}
 
-	vals := []*Values{}
+	vals := []Values{}
 	err := gocsv.UnmarshalString(s, &vals)
 	if err != nil {
 		return nil, err
@@ -25,5 +25,5 @@ func parseCSV(rawValues interface{}) (*Values, error) {
 		return nil, errors.New("no values found")
 	}
 
-	return vals[0], nil
+	return &vals[0], nil
 }

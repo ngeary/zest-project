@@ -15,13 +15,13 @@ func parseXML(rawValues interface{}) (*Values, error) {
 		return nil, errors.New("could not convert input to string")
 	}
 
-	vals := &Values{}
-	err := xml.Unmarshal([]byte(s), vals)
+	vals := Values{}
+	err := xml.Unmarshal([]byte(s), &vals)
 	if err != nil {
 		return nil, err
 	}
 
-	return vals, nil
+	return &vals, nil
 }
 
 func removeXMLDeclarations(bytes []byte) []byte {

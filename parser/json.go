@@ -13,11 +13,11 @@ func parseJSON(rawValues interface{}) (*Values, error) {
 		return nil, err
 	}
 
-	vals := &Values{}
-	err = json.Unmarshal(bytes, vals)
+	vals := Values{}
+	err = json.Unmarshal(bytes, &vals)
 	if err != nil {
 		return nil, err
 	}
 
-	return vals, nil
+	return &vals, nil
 }
