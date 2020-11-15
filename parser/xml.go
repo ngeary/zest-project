@@ -2,6 +2,6 @@ package main
 
 import "fmt"
 
-func parseXML(i interface{}) {
-	fmt.Printf("parsing xml...\n%s\n", i)
+func parseXML(rawValues interface{}) {
+	fmt.Printf("parsing xml...\n")
 }

@@ -2,33 +2,26 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
 
 	"github.com/gocarina/gocsv"
 )
 
-func parseCSV(i interface{}) {
-	fmt.Printf("parsing csv...\n%s\n", i)
-}
+func parseCSV(rawValues interface{}) {
+	fmt.Printf("parsing csv...\n")
 
-func parseSampleCSV() {
-	file, err := os.Open("../data/values-2.csv")
-	if err != nil {
-		fmt.Println("error opening file:", err)
+	s, ok := rawValues.(string)
+	if !ok {
+		fmt.Println("could not convert input to string")
 		return
 	}
 
-	defer file.Close()
-
-	values := []Values{}
-
-	err = gocsv.UnmarshalFile(file, &values)
+	vals := []Values{}
+	err := gocsv.UnmarshalString(s, &vals)
 	if err != nil {
-		fmt.Println("error unmarshaling file:", err)
+		log.Println("error unmarshaling csv values:", err)
 		return
 	}
 
-	for _, v := range values {
-		fmt.Println(v)
-	}
+	fmt.Println("Values:", vals)
 }
