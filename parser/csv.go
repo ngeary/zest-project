@@ -1,27 +1,29 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"log"
 
 	"github.com/gocarina/gocsv"
 )
 
-func parseCSV(rawValues interface{}) {
+func parseCSV(rawValues interface{}) (*Values, error) {
 	fmt.Println("parsing csv...")
 
 	s, ok := rawValues.(string)
 	if !ok {
-		fmt.Println("could not convert input to string")
-		return
+		return nil, errors.New("could not convert input to string")
 	}
 
-	vals := []Values{}
+	vals := []*Values{}
 	err := gocsv.UnmarshalString(s, &vals)
 	if err != nil {
-		log.Println("error unmarshaling csv values:", err)
-		return
+		return nil, err
 	}
 
-	fmt.Println("Values:", vals)
+	if len(vals) == 0 {
+		return nil, errors.New("no values found")
+	}
+
+	return vals[0], nil
 }

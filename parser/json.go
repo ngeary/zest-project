@@ -3,24 +3,21 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
-func parseJSON(rawValues interface{}) {
+func parseJSON(rawValues interface{}) (*Values, error) {
 	fmt.Println("parsing json...")
 
 	bytes, err := json.Marshal(rawValues)
 	if err != nil {
-		log.Println("error converting raw data to byte slice")
-		return
+		return nil, err
 	}
 
-	vals := Values{}
-	err = json.Unmarshal(bytes, &vals)
+	vals := &Values{}
+	err = json.Unmarshal(bytes, vals)
 	if err != nil {
-		log.Println("error unmarshaling json values:", err)
-		return
+		return nil, err
 	}
 
-	fmt.Println("Values:", vals)
+	return vals, nil
 }

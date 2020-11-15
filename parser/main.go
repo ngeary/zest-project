@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -48,17 +49,36 @@ type Values struct {
 }
 
 func main() {
-	req := Request{}
-
-	file, err := ioutil.ReadFile("../data/dataset3.json")
-	if err != nil {
-		log.Fatalf("error reading file: %v\n", err)
+	files := []string{
+		"../data/dataset1.json",
+		"../data/dataset2.json",
+		"../data/dataset3.json",
 	}
+
+	var err error
+
+	for _, f := range files {
+		err = parse(f)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func parse(filename string) error {
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+
+	req := Request{}
 
 	err = json.Unmarshal(file, &req)
 	if err != nil {
-		log.Fatalf("error unmarshaling data: %v\n", err)
+		return err
 	}
+
+	var vals *Values
 
 	for _, r := range req.Rows {
 		for _, s := range r.Sources {
@@ -66,14 +86,22 @@ func main() {
 
 			switch strings.ToLower(s.Format) {
 			case "json":
-				parseJSON(s.Values)
+				vals, err = parseJSON(s.Values)
 			case "csv":
-				parseCSV(s.Values)
+				vals, err = parseCSV(s.Values)
 			case "xml":
-				parseXML(s.Values)
+				vals, err = parseXML(s.Values)
 			default:
-				log.Printf("unrecognized data format: %s\n", s.Format)
+				err = errors.New("unrecognized data format: " + s.Format)
 			}
+
+			if err != nil {
+				log.Println("parsing error:", err)
+			}
+
+			fmt.Println("Values:", vals)
 		}
 	}
+
+	return nil
 }
