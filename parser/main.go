@@ -13,21 +13,21 @@ import (
 // Request represents a json request to insert data
 type Request struct {
 	RequestID string `json:"request_id"`
-	Rows      []Row
+	Rows      []*Row
 }
 
 // Row struct
 type Row struct {
-	RowID   string   `json:"row_id"`
-	Sources []Source `json:"sources"`
+	RowID   string    `json:"row_id"`
+	Sources []*Source `json:"sources"`
 }
 
 // Source struct
 type Source struct {
-	Name    string                     `json:"name"`
-	Version int                        `json:"version"`
-	Format  string                     `json:"format"`
-	Values  map[string]json.RawMessage `json:"values"`
+	Name    string      `json:"name"`
+	Version int         `json:"version"`
+	Format  string      `json:"format"`
+	Values  interface{} `json:"values"`
 }
 
 // Values struct
@@ -126,10 +126,23 @@ func parse(filename string) error {
 				continue
 			}
 
+			bytes, err := json.Marshal(source.Values)
+			if err != nil {
+				return err
+			}
+
+			vals := map[string]json.RawMessage{}
+			err = json.Unmarshal(bytes, &vals)
+			if err != nil {
+				return err
+			}
+
 			anonData := anonymizer.GetAnonymousValues()
 			for k, v := range anonData {
-				source.Values[k] = v
+				vals[k] = v
 			}
+
+			source.Values = vals
 		}
 	}
 
@@ -142,5 +155,5 @@ func writeToFile(r *Request) error {
 		return err
 	}
 
-	return ioutil.WriteFile("../anon_data/3.json", bytes, 0644)
+	return ioutil.WriteFile("../anon_data/4.json", bytes, 0644)
 }
