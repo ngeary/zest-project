@@ -52,22 +52,28 @@ func main() {
 				continue
 			}
 
-			err = parse(fi.Name())
+			seenFiles[fi.Name()] = true
+
+			req, err := parseAndAnonymize(fi.Name())
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			err = writeToFile(req, fi.Name())
 			if err != nil {
 				log.Println(err)
 			}
-
-			seenFiles[fi.Name()] = true
 		}
 
 		time.Sleep(time.Second)
 	}
 }
 
-func parse(filename string) error {
+func parseAndAnonymize(filename string) (*Request, error) {
 	file, err := ioutil.ReadFile(dataDir + filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	file = removeXMLDeclarations(file)
@@ -76,7 +82,7 @@ func parse(filename string) error {
 
 	err = json.Unmarshal(file, &req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, row := range req.Rows {
@@ -95,7 +101,7 @@ func parse(filename string) error {
 			}
 
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			// anonymize some of the applicant data
@@ -111,7 +117,7 @@ func parse(filename string) error {
 		}
 	}
 
-	return writeToFile(&req, filename)
+	return &req, nil
 }
 
 func writeToFile(r *Request, filename string) error {
