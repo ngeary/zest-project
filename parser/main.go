@@ -79,13 +79,8 @@ func parse(filename string) error {
 		return err
 	}
 
-	// anonymize some of the applicant data
 	for _, row := range req.Rows {
 		for _, source := range row.Sources {
-			if source.Name != "app_data" {
-				continue
-			}
-
 			var vals map[string]json.RawMessage
 
 			switch strings.ToLower(source.Format) {
@@ -103,12 +98,16 @@ func parse(filename string) error {
 				return err
 			}
 
-			anonData := anonymizer.GetAnonymousValues()
-			for k, v := range anonData {
-				vals[k] = v
+			// anonymize some of the applicant data
+			if source.Name == "app_data" {
+				anonData := anonymizer.GetAnonymousValues()
+				for k, v := range anonData {
+					vals[k] = v
+				}
 			}
 
 			source.Values = vals
+			source.Format = "json"
 		}
 	}
 

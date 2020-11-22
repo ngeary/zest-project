@@ -2,25 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
+	"errors"
 	"regexp"
+	"strings"
 )
-
-// func parseXML(rawValues interface{}) (*Values, error) {
-// 	fmt.Println("parsing xml...")
-
-// 	s, ok := rawValues.(string)
-// 	if !ok {
-// 		return nil, errors.New("could not convert input to string")
-// 	}
-
-// 	vals := Values{}
-// 	err := xml.Unmarshal([]byte(s), &vals)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &vals, nil
-// }
 
 func removeXMLDeclarations(bytes []byte) []byte {
 	// regex matches the following pattern: <?xml + (any number of any character) + version + (any number of any character) + ?>
@@ -31,5 +17,29 @@ func removeXMLDeclarations(bytes []byte) []byte {
 }
 
 func xmlToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
-	return nil, nil
+	valsString, ok := rawValues.(string)
+	if !ok {
+		return nil, errors.New("type assertion failed: input is not a string")
+	}
+
+	vals := map[string]json.RawMessage{}
+	d := xml.NewDecoder(strings.NewReader(valsString))
+	var field, value string
+
+	for token, err := d.Token(); err == nil; token, err = d.Token() {
+		switch t := token.(type) {
+		case xml.StartElement:
+			field = strings.TrimSpace(t.Name.Local)
+		case xml.CharData:
+			value = string([]byte(t))
+		case xml.EndElement:
+			if t.Name.Local == "root" {
+				continue
+			}
+			vals[field] = []byte("\"" + strings.TrimSpace(value) + "\"")
+			field, value = "", ""
+		}
+	}
+
+	return vals, nil
 }

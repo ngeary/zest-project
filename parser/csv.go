@@ -10,7 +10,7 @@ import (
 func csvToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
 	valsString, ok := rawValues.(string)
 	if !ok {
-		return nil, errors.New("input not a string")
+		return nil, errors.New("type assertion failed: input is not a string")
 	}
 
 	r := csv.NewReader(strings.NewReader(valsString))
