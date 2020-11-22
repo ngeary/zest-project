@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"time"
 )
 
 // Request represents a json request to insert data
@@ -49,21 +50,29 @@ type Values struct {
 }
 
 func main() {
-	files := []string{
-		// "../data/ng-dataset1.json",
-		"../data/dataset1.json",
-		"../data/dataset2.json",
-		"../data/dataset3.json",
-		"../data/dataset4.json",
-	}
+	dataDir := "../data/"
+	seenFiles := make(map[string]bool)
 
-	var err error
-
-	for _, f := range files {
-		err = parse(f)
+	for {
+		fileInfos, err := ioutil.ReadDir(dataDir)
 		if err != nil {
-			log.Println(err)
+			log.Fatal(err)
 		}
+
+		for _, fi := range fileInfos {
+			if seenFiles[fi.Name()] || !strings.HasSuffix(strings.ToLower(fi.Name()), ".json") {
+				continue
+			}
+
+			err = parse(dataDir + fi.Name())
+			if err != nil {
+				log.Println(err)
+			}
+
+			seenFiles[fi.Name()] = true
+		}
+
+		time.Sleep(time.Second)
 	}
 }
 
