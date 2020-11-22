@@ -9,7 +9,7 @@ import (
 
 // CsvValues struct
 type CsvValues struct {
-	ID        int    `csv:"id"`
+	ID        string `csv:"id"`
 	MemberID  string `csv:"member_id"`
 	FirstName string `csv:"first_name"`
 	LastName  string `csv:"last_name"`
