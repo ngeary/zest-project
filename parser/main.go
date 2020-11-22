@@ -122,6 +122,10 @@ func parse(filename string) error {
 
 	for _, row := range req.Rows {
 		for _, source := range row.Sources {
+			if source.Name != "app_data" {
+				continue
+			}
+
 			anonData := anonymizer.GetAnonymousValues()
 			for k, v := range anonData {
 				source.Values[k] = v
@@ -138,5 +142,5 @@ func writeToFile(r *Request) error {
 		return err
 	}
 
-	return ioutil.WriteFile("../anon_data/2.json", bytes, 0644)
+	return ioutil.WriteFile("../anon_data/3.json", bytes, 0644)
 }
