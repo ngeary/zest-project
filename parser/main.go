@@ -37,40 +37,18 @@ type Source struct {
 	Values  interface{} `json:"values"`
 }
 
-// Values struct
-type Values struct {
-	ID                 interface{} `json:"id" csv:"id"`
-	MemberID           interface{} `json:"member_id" csv:"member_id"`
-	FirstName          interface{} `json:"first_name" csv:"first_name"`
-	LastName           interface{} `json:"last_name" csv:"last_name"`
-	Address            interface{} `json:"address" csv:"address"`
-	DOB                interface{} `json:"dob" csv:"dob"`
-	CountryID          interface{} `json:"CountryID" xml:"CountryID"`
-	Employer           interface{} `json:"Employer" xml:"Employer"`
-	EmploymentType     interface{} `json:"EmploymentType" xml:"EmploymentType"`
-	EmpOrderNum        interface{} `json:"EmpOrderNum" xml:"EmpOrderNum"`
-	GrossMonthlyIncome interface{} `json:"GrossMonthlyIncome" xml:"GrossMonthlyIncome"`
-	Position           interface{} `json:"Position" xml:"Position"`
-	RetiredFlag        interface{} `json:"RetiredFlag" xml:"RetiredFlag"`
-	SelfEmpFlag        interface{} `json:"SelfEmpFlag" xml:"SelfEmpFlag"`
-	State              interface{} `json:"State" xml:"State"`
-}
-
 func main() {
 	seenFiles := make(map[string]bool)
 
 	for {
 		fileInfos, err := ioutil.ReadDir(dataDir)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			continue
 		}
 
 		for _, fi := range fileInfos {
 			if seenFiles[fi.Name()] || !strings.HasSuffix(strings.ToLower(fi.Name()), ".json") {
-				continue
-			}
-
-			if fi.Name() != "dataset1.json" && fi.Name() != "dataset2.json" {
 				continue
 			}
 
@@ -101,6 +79,7 @@ func parse(filename string) error {
 		return err
 	}
 
+	// anonymize some of the applicant data
 	for _, row := range req.Rows {
 		for _, source := range row.Sources {
 			if source.Name != "app_data" {
@@ -115,7 +94,7 @@ func parse(filename string) error {
 			case "csv":
 				vals, err = csvToMap(source.Values)
 			case "xml":
-				//
+				vals, err = xmlToMap(source.Values)
 			default:
 				err = errors.New("unrecognized data format: " + source.Format)
 			}
