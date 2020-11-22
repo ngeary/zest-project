@@ -3,12 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
 	"time"
-
-	"github.com/gocarina/gocsv"
 
 	"github.com/ngeary/zest-project/anonymizer"
 )
@@ -71,7 +70,7 @@ func main() {
 				continue
 			}
 
-			if fi.Name() != "dataset1.json" {
+			if fi.Name() != "dataset1.json" && fi.Name() != "dataset2.json" {
 				continue
 			}
 
@@ -102,51 +101,21 @@ func parse(filename string) error {
 		return err
 	}
 
-	// var vals *Values
-
-	// for _, r := range req.Rows {
-	// 	for _, s := range r.Sources {
-	// 		fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
-
-	// 		switch strings.ToLower(s.Format) {
-	// 		case "json":
-	// 			vals, err = parseJSON(s.Values)
-	// 		case "csv":
-	// 			vals, err = parseCSV(s.Values)
-	// 		case "xml":
-	// 			vals, err = parseXML(s.Values)
-	// 		default:
-	// 			err = errors.New("unrecognized data format: " + s.Format)
-	// 		}
-
-	// 		if err != nil {
-	// 			log.Println("parsing error:", err)
-	// 		}
-
-	// 		fmt.Println("Values:", vals)
-	// 	}
-	// }
-
 	for _, row := range req.Rows {
 		for _, source := range row.Sources {
 			if source.Name != "app_data" {
 				continue
 			}
 
-			bytes, err := json.Marshal(source.Values)
-			if err != nil {
-				return err
-			}
-
 			var vals map[string]json.RawMessage
 
 			switch strings.ToLower(source.Format) {
 			case "json":
-				err = json.Unmarshal(bytes, &vals)
-			case "csv":
-				err = gocsv.UnmarshalBytes(bytes, &vals)
-			case "xml":
 				vals, err = jsonToMap(source.Values)
+			case "csv":
+				vals, err = csvToMap(source.Values)
+			case "xml":
+				//
 			default:
 				err = errors.New("unrecognized data format: " + source.Format)
 			}
@@ -173,5 +142,5 @@ func writeToFile(r *Request, filename string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(anonDataDir+filename, bytes, 0644)
+	return ioutil.WriteFile(anonDataDir+fmt.Sprintf("%d-", time.Now().UnixNano())+filename, bytes, 0644)
 }

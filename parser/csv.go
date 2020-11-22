@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gocarina/gocsv"
 )
@@ -49,13 +51,34 @@ func parseCSV(rawValues interface{}) (*Values, error) {
 }
 
 func csvToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
-	s, ok := rawValues.(string)
+	valsString, ok := rawValues.(string)
 	if !ok {
-		return nil, errors.New("type assertion failed: input was not a string")
+		return nil, errors.New("input not a string")
+	}
+
+	r := csv.NewReader(strings.NewReader(valsString))
+
+	records, err := r.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(records) < 2 {
+		return nil, errors.New("input does not have at least two lines")
+	}
+
+	if len(records[0]) != len(records[1]) {
+		return nil, errors.New("number of values does not match number of fields")
 	}
 
 	vals := map[string]json.RawMessage{}
-	err := gocsv.UnmarshalString(s, &vals)
 
-	return vals, err
+	for i, field := range records[0] {
+		k := strings.TrimSpace(field)
+		v := "\"" + strings.TrimSpace(records[1][i]) + "\""
+
+		vals[k] = []byte(v)
+	}
+
+	return vals, nil
 }
