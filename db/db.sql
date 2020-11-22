@@ -162,3 +162,14 @@ create table applications (
     updated_time TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     primary key (row_id)
 );
+
+
+
+create table applications (
+    row_id varchar(55) not null,
+    app_data json,
+    employment_data json,
+    created_time TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP,
+    updated_time TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    primary key (row_id)
+);

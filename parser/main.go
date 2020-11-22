@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ngeary/zest-project/db"
+
 	"github.com/ngeary/zest-project/anonymizer"
 )
 
@@ -86,6 +88,9 @@ func parseAndAnonymize(filename string) (*Request, error) {
 	}
 
 	for _, row := range req.Rows {
+		appData := make(map[string]json.RawMessage)
+		employmentData := make(map[string]json.RawMessage)
+
 		for _, source := range row.Sources {
 			var vals map[string]json.RawMessage
 
@@ -104,16 +109,30 @@ func parseAndAnonymize(filename string) (*Request, error) {
 				return nil, err
 			}
 
-			// anonymize some of the applicant data
-			if source.Name == "app_data" {
+			switch strings.ToLower(source.Name) {
+			case "app_data":
+				for k, v := range vals {
+					appData[k] = v
+				}
+
+				// anonymize some of the applicant data
 				anonData := anonymizer.GetAnonymousValues()
 				for k, v := range anonData {
 					vals[k] = v
+				}
+			case "employment":
+				for k, v := range vals {
+					employmentData[k] = v
 				}
 			}
 
 			source.Values = vals
 			source.Format = "json"
+		}
+
+		err = db.AddApplication(row.RowID, appData, employmentData)
+		if err != nil {
+			log.Println("error adding to db:", err)
 		}
 	}
 

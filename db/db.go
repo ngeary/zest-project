@@ -15,19 +15,19 @@ const (
 )
 
 var (
-	practiceDB *sql.DB
+	zestDB *sql.DB
 )
 
 func init() {
 	dbPass := os.Getenv("MYSQL_PW")
 
 	var err error
-	practiceDB, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	zestDB, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = practiceDB.Ping()
+	err = zestDB.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
