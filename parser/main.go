@@ -2,12 +2,20 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"strings"
 	"time"
 
+	"github.com/gocarina/gocsv"
+
 	"github.com/ngeary/zest-project/anonymizer"
+)
+
+const (
+	dataDir     = "../data/"
+	anonDataDir = "../anon_data/"
 )
 
 // Request represents a json request to insert data
@@ -50,7 +58,6 @@ type Values struct {
 }
 
 func main() {
-	dataDir := "../data/"
 	seenFiles := make(map[string]bool)
 
 	for {
@@ -68,7 +75,7 @@ func main() {
 				continue
 			}
 
-			err = parse(dataDir + fi.Name())
+			err = parse(fi.Name())
 			if err != nil {
 				log.Println(err)
 			}
@@ -81,7 +88,7 @@ func main() {
 }
 
 func parse(filename string) error {
-	file, err := ioutil.ReadFile(filename)
+	file, err := ioutil.ReadFile(dataDir + filename)
 	if err != nil {
 		return err
 	}
@@ -131,8 +138,19 @@ func parse(filename string) error {
 				return err
 			}
 
-			vals := map[string]json.RawMessage{}
-			err = json.Unmarshal(bytes, &vals)
+			var vals map[string]json.RawMessage
+
+			switch strings.ToLower(source.Format) {
+			case "json":
+				err = json.Unmarshal(bytes, &vals)
+			case "csv":
+				err = gocsv.UnmarshalBytes(bytes, &vals)
+			case "xml":
+				vals, err = jsonToMap(source.Values)
+			default:
+				err = errors.New("unrecognized data format: " + source.Format)
+			}
+
 			if err != nil {
 				return err
 			}
@@ -146,14 +164,14 @@ func parse(filename string) error {
 		}
 	}
 
-	return writeToFile(&req)
+	return writeToFile(&req, filename)
 }
 
-func writeToFile(r *Request) error {
+func writeToFile(r *Request, filename string) error {
 	bytes, err := json.MarshalIndent(r, "", "\t")
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile("../anon_data/4.json", bytes, 0644)
+	return ioutil.WriteFile(anonDataDir+filename, bytes, 0644)
 }

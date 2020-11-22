@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -45,4 +46,16 @@ func parseCSV(rawValues interface{}) (*Values, error) {
 	}
 
 	return v, nil
+}
+
+func csvToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
+	s, ok := rawValues.(string)
+	if !ok {
+		return nil, errors.New("type assertion failed: input was not a string")
+	}
+
+	vals := map[string]json.RawMessage{}
+	err := gocsv.UnmarshalString(s, &vals)
+
+	return vals, err
 }
