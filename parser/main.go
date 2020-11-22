@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/ngeary/zest-project/anonymizer"
 )
 
 // Request represents a json request to insert data
@@ -24,10 +24,10 @@ type Row struct {
 
 // Source struct
 type Source struct {
-	Name    string      `json:"name"`
-	Version int         `json:"version"`
-	Format  string      `json:"format"`
-	Values  interface{} `json:"values"`
+	Name    string                     `json:"name"`
+	Version int                        `json:"version"`
+	Format  string                     `json:"format"`
+	Values  map[string]json.RawMessage `json:"values"`
 }
 
 // Values struct
@@ -64,6 +64,10 @@ func main() {
 				continue
 			}
 
+			if fi.Name() != "dataset1.json" {
+				continue
+			}
+
 			err = parse(dataDir + fi.Name())
 			if err != nil {
 				log.Println(err)
@@ -91,30 +95,48 @@ func parse(filename string) error {
 		return err
 	}
 
-	var vals *Values
+	// var vals *Values
 
-	for _, r := range req.Rows {
-		for _, s := range r.Sources {
-			fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
+	// for _, r := range req.Rows {
+	// 	for _, s := range r.Sources {
+	// 		fmt.Printf("\nRequest ID: %s\tRow ID: %s\tSource Name: %s\n", req.RequestID, r.RowID, s.Name)
 
-			switch strings.ToLower(s.Format) {
-			case "json":
-				vals, err = parseJSON(s.Values)
-			case "csv":
-				vals, err = parseCSV(s.Values)
-			case "xml":
-				vals, err = parseXML(s.Values)
-			default:
-				err = errors.New("unrecognized data format: " + s.Format)
+	// 		switch strings.ToLower(s.Format) {
+	// 		case "json":
+	// 			vals, err = parseJSON(s.Values)
+	// 		case "csv":
+	// 			vals, err = parseCSV(s.Values)
+	// 		case "xml":
+	// 			vals, err = parseXML(s.Values)
+	// 		default:
+	// 			err = errors.New("unrecognized data format: " + s.Format)
+	// 		}
+
+	// 		if err != nil {
+	// 			log.Println("parsing error:", err)
+	// 		}
+
+	// 		fmt.Println("Values:", vals)
+	// 	}
+	// }
+
+	for _, row := range req.Rows {
+		for _, source := range row.Sources {
+			anonData := anonymizer.GetAnonymousValues()
+			for k, v := range anonData {
+				source.Values[k] = v
 			}
-
-			if err != nil {
-				log.Println("parsing error:", err)
-			}
-
-			fmt.Println("Values:", vals)
 		}
 	}
 
-	return nil
+	return writeToFile(&req)
+}
+
+func writeToFile(r *Request) error {
+	bytes, err := json.MarshalIndent(r, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile("../anon_data/2.json", bytes, 0644)
 }
