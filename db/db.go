@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // database driver
 )
 
 const (
@@ -19,10 +19,10 @@ var (
 )
 
 func init() {
-	dbPass := os.Getenv("MYSQL_PW")
+	dbPassword := os.Getenv("MYSQL_PW")
 
 	var err error
-	zestDB, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	zestDB, err = sql.Open(dbDriver, dbUser+":"+dbPassword+"@/"+dbName)
 	if err != nil {
 		log.Fatal(err)
 	}

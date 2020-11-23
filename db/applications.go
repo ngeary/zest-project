@@ -2,22 +2,7 @@ package db
 
 import (
 	"encoding/json"
-	"time"
 )
-
-// Application holds all the information about an application
-type Application struct {
-	RowID          string
-	ID             string
-	MemberID       string
-	FirstName      string
-	LastName       string
-	DOB            string
-	AppData        map[string]json.RawMessage
-	EmploymentData map[string]json.RawMessage
-	CreatedTime    time.Time
-	UpdatedTime    time.Time
-}
 
 // AddApplication adds an application to the database
 func AddApplication(

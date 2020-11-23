@@ -8,12 +8,12 @@ import (
 	"strings"
 )
 
-func removeXMLDeclarations(bytes []byte) []byte {
+func removeXMLDeclarations(input []byte) []byte {
 	// regex matches the following pattern: <?xml + (any number of any character) + version + (any number of any character) + ?>
 	re := regexp.MustCompile(`<\?xml.*version.*\?>`)
 
 	// replace each occurrence of XML declaration with empty byte slice
-	return re.ReplaceAll(bytes, []byte{})
+	return re.ReplaceAll(input, []byte{})
 }
 
 func xmlToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
