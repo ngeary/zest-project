@@ -8,14 +8,25 @@ import (
 // Application holds all the information about an application
 type Application struct {
 	RowID          string
+	ID             string
+	MemberID       string
+	FirstName      string
+	LastName       string
+	DOB            string
 	AppData        map[string]json.RawMessage
 	EmploymentData map[string]json.RawMessage
 	CreatedTime    time.Time
 	UpdatedTime    time.Time
 }
 
+// AddApplication adds an application to the database
 func AddApplication(
 	rowID string,
+	id string,
+	memberID string,
+	firstName string,
+	lastName string,
+	dob string,
 	appData map[string]json.RawMessage,
 	employmentData map[string]json.RawMessage,
 ) error {
@@ -29,9 +40,11 @@ func AddApplication(
 		return err
 	}
 
-	queryStr := `insert into applications (row_id, app_data, employment_data) values (?, ?, ?)` +
-		` on duplicate key update app_data = ?, employment_data = ?`
-	_, err = zestDB.Exec(queryStr, rowID, appDataJSON, employmentDataJSON, appDataJSON, employmentDataJSON)
+	queryStr := `insert into applications (row_id, id, member_id, first_name, last_name, dob, app_data, employment_data)` +
+		` values (?, ?, ?, ?, ?, ?, ?, ?)` +
+		` on duplicate key update id = ?, member_id = ?, first_name = ?, last_name = ?, dob = ?, app_data = ?, employment_data = ?`
+	_, err = zestDB.Exec(queryStr, rowID, id, memberID, firstName, lastName, dob, appDataJSON, employmentDataJSON,
+		id, memberID, firstName, lastName, dob, appDataJSON, employmentDataJSON)
 
 	return err
 }

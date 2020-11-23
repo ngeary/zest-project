@@ -167,6 +167,11 @@ create table applications (
 
 create table applications (
     row_id varchar(55) not null,
+    id varchar(55),
+	member_id varchar(55),
+	first_name varchar(55),
+	last_name varchar(55),
+	dob varchar(55),
     app_data json,
     employment_data json,
     created_time TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP,

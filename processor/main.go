@@ -84,6 +84,7 @@ func process(filename string) error {
 	for _, row := range req.Rows {
 		appData := make(map[string]json.RawMessage)
 		employmentData := make(map[string]json.RawMessage)
+		var id, memberID, firstName, lastName, dob string
 
 		for _, source := range row.Sources {
 			var vals map[string]json.RawMessage
@@ -110,6 +111,12 @@ func process(filename string) error {
 					appData[k] = v
 				}
 
+				id = strings.Trim(string(appData["id"]), "\"")
+				memberID = strings.Trim(string(appData["member_id"]), "\"")
+				firstName = strings.Trim(string(appData["first_name"]), "\"")
+				lastName = strings.Trim(string(appData["last_name"]), "\"")
+				dob = strings.Trim(string(appData["dob"]), "\"")
+
 				// anonymize some of the applicant data
 				anonData := anonymizer.GetAnonymousValues()
 				for k, v := range anonData {
@@ -125,7 +132,7 @@ func process(filename string) error {
 			source.Format = "json"
 		}
 
-		err = db.AddApplication(row.RowID, appData, employmentData)
+		err = db.AddApplication(row.RowID, id, memberID, firstName, lastName, dob, appData, employmentData)
 		if err != nil {
 			log.Println("error adding to db:", err)
 		}
