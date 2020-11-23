@@ -134,7 +134,10 @@ func process(filename string) error {
 		err = db.AddApplication(row.RowID, id, memberID, firstName, lastName, dob, appData, employmentData)
 		if err != nil {
 			log.Println("error adding to db:", err)
+			continue
 		}
+
+		fmt.Printf("\nAdded application (row_id: %v) to the database.\n", row.RowID)
 	}
 
 	return writeToFile(&req, filename)
@@ -146,5 +149,14 @@ func writeToFile(r *Request, filename string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(anonDataDir+fmt.Sprintf("%d-", time.Now().UnixNano())+filename, bytes, 0644)
+	outputPath := anonDataDir + fmt.Sprintf("%d-", time.Now().UnixNano()) + filename
+
+	err = ioutil.WriteFile(outputPath, bytes, 0644)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\nWrote request %s to %s with anonymized data.\n", r.RequestID, outputPath)
+
+	return nil
 }

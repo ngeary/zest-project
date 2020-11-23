@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -24,7 +25,10 @@ var (
 )
 
 func init() {
-	loadReplacementData()
+	err := loadReplacementData()
+	if err != nil {
+		log.Fatal("failed to initialize anonymizer:", err)
+	}
 
 	rand.Seed(time.Now().UnixNano())
 }
@@ -45,6 +49,20 @@ func loadReplacementData() error {
 	replacementLastNames, err = stringsFromFile(lastNamesFile)
 
 	return err
+}
+
+// reads a file from the replacement data directory and returns it as an array of strings, one string per line
+func stringsFromFile(filename string) ([]string, error) {
+	bytes, err := ioutil.ReadFile(replacementDataDir + filename)
+	if err != nil {
+		return nil, err
+	}
+
+	// remove \r characters
+	s := strings.ReplaceAll(string(bytes), "\r", "")
+
+	// split each line into a separate string
+	return strings.Split(s, "\n"), nil
 }
 
 // GetAnonymousValues returns a map of sensitive field names to randomized values
@@ -76,25 +94,13 @@ func randDOB() string {
 	return birthTime.Format("2006-01-02")
 }
 
+// returns a random string of 10 digits; the first digit is guaranteed to be non-zero
 func randPhone() string {
-	// generate a number from 0 to 9
-	firstDigit := strconv.Itoa(rand.Intn(8) + 1)
+	// generate a number from 1 to 9
+	firstDigit := strconv.Itoa(rand.Intn(9) + 1)
 
 	// generate a 9-digit number and pad with leading 0s if necessary
 	last9Digits := fmt.Sprintf("%09d", rand.Intn(1000000000))
 
 	return firstDigit + last9Digits
-}
-
-func stringsFromFile(filename string) ([]string, error) {
-	bytes, err := ioutil.ReadFile(replacementDataDir + filename)
-	if err != nil {
-		return nil, err
-	}
-
-	// remove \r characters
-	s := strings.ReplaceAll(string(bytes), "\r", "")
-
-	// split each line into a separate string
-	return strings.Split(s, "\n"), nil
 }
