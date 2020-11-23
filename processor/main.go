@@ -41,6 +41,7 @@ type Source struct {
 func main() {
 	seenFiles := make(map[string]bool)
 
+	// continue scanning directory until program is terminated
 	for {
 		fileInfos, err := ioutil.ReadDir(dataDir)
 		if err != nil {
@@ -49,6 +50,7 @@ func main() {
 		}
 
 		for _, fi := range fileInfos {
+			// only process new json files
 			if seenFiles[fi.Name()] || !strings.HasSuffix(strings.ToLower(fi.Name()), ".json") {
 				continue
 			}
@@ -65,12 +67,19 @@ func main() {
 	}
 }
 
+// process does the following:
+//  1. parses a file
+//  2. formats all components as json
+//  3. inserts application information into the database
+//  4. anonymizes sensitive data
+//  5. writes anonymized data to a file
 func process(filename string) error {
 	file, err := ioutil.ReadFile(dataDir + filename)
 	if err != nil {
 		return err
 	}
 
+	// strip any xml declarations before attempting to parse
 	file = removeXMLDeclarations(file)
 
 	req := Request{}
@@ -110,6 +119,7 @@ func process(filename string) error {
 					appData[k] = v
 				}
 
+				// save some special fields that will get their own columns in the database
 				id = strings.Trim(string(appData["id"]), "\"")
 				memberID = strings.Trim(string(appData["member_id"]), "\"")
 				firstName = strings.Trim(string(appData["first_name"]), "\"")
@@ -127,7 +137,10 @@ func process(filename string) error {
 				}
 			}
 
+			// file output will use the anonymized values
 			source.Values = vals
+
+			// file output will write all data sources as json
 			source.Format = "json"
 		}
 

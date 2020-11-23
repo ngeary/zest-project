@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// csvToMap formats csv raw values into a map
 func csvToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
 	valsString, ok := rawValues.(string)
 	if !ok {

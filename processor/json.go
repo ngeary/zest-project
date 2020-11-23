@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 )
 
+// jsonToMap formats json raw values into a map
 func jsonToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
 	bytes, err := json.Marshal(rawValues)
 	if err != nil {

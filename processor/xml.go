@@ -16,6 +16,7 @@ func removeXMLDeclarations(input []byte) []byte {
 	return re.ReplaceAll(input, []byte{})
 }
 
+// xmlToMap formats xml raw values into a map
 func xmlToMap(rawValues interface{}) (map[string]json.RawMessage, error) {
 	valsString, ok := rawValues.(string)
 	if !ok {
