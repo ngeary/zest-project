@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	replacementDataDir = "../replacement_data/"
+	replacementDataDir = "./replacement_data/"
 	addressesFile      = "addresses.txt"
 	firstNamesFile     = "first_names.txt"
 	lastNamesFile      = "last_names.txt"

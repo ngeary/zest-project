@@ -9,14 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ngeary/zest-project/db"
-
 	"github.com/ngeary/zest-project/anonymizer"
+	"github.com/ngeary/zest-project/db"
 )
 
 const (
-	dataDir     = "../data/"
-	anonDataDir = "../anon_data/"
+	dataDir     = "./data/"
+	anonDataDir = "./anon_data/"
 )
 
 // Request represents a json request to insert data
