@@ -24,13 +24,13 @@ type Request struct {
 	Rows      []*Row
 }
 
-// Row struct
+// Row contains all the data sources for a given application
 type Row struct {
 	RowID   string    `json:"row_id"`
 	Sources []*Source `json:"sources"`
 }
 
-// Source struct
+// Source is a json, csv, or xml data source that contains application information
 type Source struct {
 	Name    string      `json:"name"`
 	Version int         `json:"version"`
